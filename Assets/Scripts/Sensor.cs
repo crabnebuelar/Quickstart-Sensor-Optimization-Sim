@@ -12,6 +12,8 @@ public class Sensor : MonoBehaviour
     private HashSet<Transform> candidates = new HashSet<Transform>();
     private float nextCheckTime;
 
+    private SensorManager manager;
+
     private void OnTriggerEnter(Collider other)
     {
         if (((1 << other.gameObject.layer) & detectableLayers) != 0)
@@ -30,6 +32,14 @@ public class Sensor : MonoBehaviour
         SphereCollider sphereCollider = GetComponent<SphereCollider>();
         sphereCollider.isTrigger = true;
         sphereCollider.radius = maxDistance;
+    }
+
+    void OnEnable()
+    {
+        if (manager == null)
+            manager = GetComponentInParent<SensorManager>();
+
+        manager?.Register(this);
     }
 
     private void Start()
@@ -69,15 +79,24 @@ public class Sensor : MonoBehaviour
 
             if (HasLineOfSight(target))
             {
-                print("test");
+                //print("test");
             }
         }
+    }
+
+    public int CanSense(Detectable detectable)
+    {
+        if(candidates.Contains(detectable.transform) && HasLineOfSight(detectable.transform))
+        {
+            return 1;
+        }
+        return 0;
     }
 
     bool HasLineOfSight(Transform target)
     {
         Vector3 origin = transform.position;
-        Debug.DrawLine(origin, target.position, Color.black, 0.1f);
+        //Debug.DrawLine(origin, target.position, Color.black, 0.1f);
         Vector3 direction = (target.position - origin).normalized;
 
         float distance = Vector3.Distance(origin, target.position);
@@ -103,8 +122,5 @@ public class Sensor : MonoBehaviour
                 Gizmos.DrawLine(transform.position, target.position);
         }
     }
-
-    Vector3 mousePosition;
-
 
 }

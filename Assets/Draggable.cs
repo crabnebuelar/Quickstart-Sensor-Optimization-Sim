@@ -22,7 +22,7 @@ public class Draggable : MonoBehaviour
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, draggableLayer))
             {
-                selectedObject = hit.transform.parent;
+                selectedObject = hit.transform;
                 yPosition = selectedObject.position.y; // Fix y
             }
         }
