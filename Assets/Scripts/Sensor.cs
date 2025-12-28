@@ -82,7 +82,7 @@ public class Sensor : MonoBehaviour
 
         float distance = Vector3.Distance(origin, target.position);
 
-        if (Physics.Raycast(origin, direction, out RaycastHit hit, distance, detectableLayers))
+        if (Physics.Raycast(origin, direction, out RaycastHit hit, distance, detectableLayers | obstacleLayers))
         {
 
             return hit.transform == target;
@@ -106,18 +106,5 @@ public class Sensor : MonoBehaviour
 
     Vector3 mousePosition;
 
-    private Vector3 GetMousePos()
-    {
-        return Camera.main.WorldToScreenPoint(transform.position);
-    }
 
-    private void OnMouseDown()
-    {
-        mousePosition = Input.mousePosition - GetMousePos();
-    }
-
-    private void OnMouseDrag()
-    {
-        transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition - mousePosition);
-    }
 }
