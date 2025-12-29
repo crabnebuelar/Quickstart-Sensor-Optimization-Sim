@@ -27,6 +27,11 @@ public class Sensor : MonoBehaviour
         candidates.Remove(other.transform);
     }
 
+    public void setRange(float range)
+    {
+        maxDistance = range;
+    }
+
     void Awake()
     {
         SphereCollider sphereCollider = GetComponent<SphereCollider>();
