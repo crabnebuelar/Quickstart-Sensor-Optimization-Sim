@@ -7,6 +7,7 @@ public class Sensor : MonoBehaviour
     public LayerMask detectableLayers;
     public LayerMask obstacleLayers;
     public float maxDistance = 10f;
+    public GameObject rangeIndicator;
     public float checkInterval = 0.1f;
 
     private HashSet<Transform> candidates = new HashSet<Transform>();
@@ -74,6 +75,10 @@ public class Sensor : MonoBehaviour
         SphereCollider sc = GetComponent<SphereCollider>();
         if (sc != null)
             sc.radius = maxDistance;
+
+        float diameter = maxDistance * 2f;
+
+        rangeIndicator.transform.localScale = new Vector3(diameter, 0.01f, diameter);
     }
 
     private void Update()

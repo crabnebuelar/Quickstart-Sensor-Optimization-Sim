@@ -38,9 +38,10 @@ public class Draggable : MonoBehaviour
                 selectedObject = hit.transform;
                 yPosition = selectedObject.position.y; // Fix y
 
-                if (selectedObject.GetComponent<Sensor>() != null)
+                Sensor sComp = selectedObject.GetComponent<Sensor>();
+                if (sComp != null && sComp != selectedSensor)
                 {
-                    selectedSensor = selectedObject.GetComponent<Sensor>();
+                    setSelectedSensor(sComp);
                     rangeSlider.GetComponent<Slider>().value = selectedSensor.maxDistance;
                 }
 
@@ -88,6 +89,10 @@ public class Draggable : MonoBehaviour
 
     public void setSelectedSensor(Sensor s)
     {
+        selectedSensor?.rangeIndicator.SetActive(false);
+        s?.rangeIndicator.SetActive(true);
+  
+        
         selectedSensor = s;
     }
 }
