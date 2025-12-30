@@ -1,13 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public class SensorManager : MonoBehaviour
 {
     private List<Sensor> sensors = new List<Sensor>();
     private List<Detectable> detectables = new List<Detectable>();
+    public Draggable draggable;
     
     public GameObject sensorPrefab;
     public GameObject detectablePrefab;
@@ -17,8 +22,6 @@ public class SensorManager : MonoBehaviour
 
     public int maxSensors;
     public int maxDetectables;
-
-
 
 
     private void Update()
@@ -43,7 +46,9 @@ public class SensorManager : MonoBehaviour
     {
         if (sensors.Count >= maxSensors) return;
 
-        GameObject sObj = Instantiate(sensorPrefab, transform.position, Quaternion.identity);
+        Vector3 spawnPos = transform.position;
+        spawnPos.y += 3f;
+        GameObject sObj = Instantiate(sensorPrefab, spawnPos, Quaternion.identity);
         sObj.transform.SetParent(this.transform);
         Register(sObj.GetComponent<Sensor>());
     }
@@ -53,6 +58,10 @@ public class SensorManager : MonoBehaviour
         if (sensors.Count == 0) return;
         Sensor toRemove = sensors[sensors.Count - 1];
         Unregister(toRemove);
+        if(toRemove == draggable.getSelectedSensor())
+        {
+            draggable.setSelectedSensor(null);
+        }
         Destroy(toRemove.gameObject);
     }
 
@@ -60,7 +69,9 @@ public class SensorManager : MonoBehaviour
     {
         if (detectables.Count >= maxDetectables) return;
 
-        GameObject sObj = Instantiate(detectablePrefab, transform.position, Quaternion.identity);
+        Vector3 spawnPos = transform.position;
+        spawnPos.x += 25f;
+        GameObject sObj = Instantiate(detectablePrefab, spawnPos, Quaternion.identity);
         sObj.transform.SetParent(this.transform);
         Register(sObj.GetComponent<Detectable>());
     }
@@ -109,6 +120,86 @@ public class SensorManager : MonoBehaviour
         }
         return matrix;
     }
+
+    private string SerializeMatrix(int[,] matrix)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+        List<string> lines = new List<string>();
+
+        for (int i = 0; i < rows; i++)
+        {
+            int[] row = new int[cols];
+            for (int j = 0; j < cols; j++)
+                row[j] = matrix[i, j];
+
+            lines.Add(string.Join(",", row));
+        }
+
+        return string.Join(";", lines);
+    }
+
+    public void Optimize()
+    {
+        string pythonPath = @"C:\Users\Crabnebuelar\miniconda3\python.exe";
+        string scriptPath = @"Assets/Scripts/sensor_optimizer.py";
+        string outputPath = @"C:\Users\Crabnebuelar\Documents\GitHub\Quickstart-Sensor-Optimization-Sim\solution.json";
+
+        int[,] coverageMatrix = generateCoverageMatrix();
+        string json = SerializeMatrix(coverageMatrix);
+        print(json);
+
+        ProcessStartInfo psi = new ProcessStartInfo();
+        psi.FileName = pythonPath;
+        psi.Arguments = $"\"{scriptPath}\" \"{json}\" \"{outputPath}\"";
+        psi.UseShellExecute = false;
+        psi.RedirectStandardOutput = true;
+        psi.RedirectStandardError = true;
+        psi.CreateNoWindow = true;
+
+        Process p = Process.Start(psi);
+        p.WaitForExit();
+
+        // Read output
+        string output = p.StandardOutput.ReadToEnd();
+        string errors = p.StandardError.ReadToEnd();
+
+        print("PYTHON OUTPUT:\n" + output);
+        print("PYTHON ERRORS:\n" + errors);
+
+        string resultJson = File.ReadAllText("solution.json");
+
+        SensorData data = JsonUtility.FromJson<SensorData>(resultJson);
+
+        // Access values
+        foreach (var kv in data.selected_sensors)
+        {
+            print(kv.key + " = " + kv.value);
+        }
+
+        for (int i = 0; i < data.selected_sensors.Count; i++)
+        {
+            if (data.selected_sensors[i].value == 0)
+            {
+                sensors[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
+
+    [Serializable]
+    public class SensorKeyValue
+    {
+        public string key;
+        public float value;
+    }
+
+    [Serializable]
+    public class SensorData
+    {
+        public List<SensorKeyValue> selected_sensors;
+    }
+
     public List<Sensor> GetSensors() => sensors;
     public List<Detectable> GetDetectables() => detectables;
 }

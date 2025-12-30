@@ -9,6 +9,7 @@ public class Draggable : MonoBehaviour
     private Camera cam;
     private Transform prevSelected;
     private Transform selectedObject;
+    private Color originalColor;
     private float yPosition;
 
     private Sensor selectedSensor;
@@ -30,6 +31,10 @@ public class Draggable : MonoBehaviour
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, draggableLayer))
             {
+                if(prevSelected != null)
+                {
+                    rend.material.color = originalColor;
+                }
                 selectedObject = hit.transform;
                 yPosition = selectedObject.position.y; // Fix y
 
@@ -39,8 +44,8 @@ public class Draggable : MonoBehaviour
                     rangeSlider.GetComponent<Slider>().value = selectedSensor.maxDistance;
                 }
 
-                rend = selectedObject.GetComponent<Renderer>();
-                Color originalColor = rend.material.color;
+                rend = selectedObject.GetChild(0).GetComponent<Renderer>();
+                originalColor = rend.material.color;
                 rend.material.color = Color.yellow;
             }
             else
@@ -74,5 +79,15 @@ public class Draggable : MonoBehaviour
     public void setRangeOnSelected(float range)
     {
         selectedSensor?.setRange(range);
+    }
+    
+    public Sensor getSelectedSensor()
+    {
+        return selectedSensor;
+    }
+
+    public void setSelectedSensor(Sensor s)
+    {
+        selectedSensor = s;
     }
 }

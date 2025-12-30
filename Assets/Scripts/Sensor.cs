@@ -30,10 +30,12 @@ public class Sensor : MonoBehaviour
     public void setRange(float range)
     {
         maxDistance = range;
+        OnValidate();
     }
 
     void Awake()
     {
+        PopulateInitialCandidates();
         SphereCollider sphereCollider = GetComponent<SphereCollider>();
         sphereCollider.isTrigger = true;
         sphereCollider.radius = maxDistance;
@@ -41,6 +43,7 @@ public class Sensor : MonoBehaviour
 
     void OnEnable()
     {
+        PopulateInitialCandidates();
         if (manager == null)
             manager = GetComponentInParent<SensorManager>();
 
@@ -82,10 +85,10 @@ public class Sensor : MonoBehaviour
         {
             if (target == null) continue;
 
-            if (HasLineOfSight(target))
+            /*if (HasLineOfSight(target))
             {
                 //print("test");
-            }
+            }*/
         }
     }
 
@@ -108,7 +111,6 @@ public class Sensor : MonoBehaviour
 
         if (Physics.Raycast(origin, direction, out RaycastHit hit, distance, detectableLayers | obstacleLayers))
         {
-
             return hit.transform == target;
         }
 
