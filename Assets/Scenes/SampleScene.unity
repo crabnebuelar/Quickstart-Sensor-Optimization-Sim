@@ -7474,6 +7474,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4123262630441348254, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 24.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4123262630441348254, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 24.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5556648369854010852, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_Positions.Array.data[0].x
+      value: 12.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5556648369854010852, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_Positions.Array.data[1].x
+      value: 12.240772
+      objectReference: {fileID: 0}
+    - target: {fileID: 5556648369854010852, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_Positions.Array.data[1].z
+      value: 1.2056109
+      objectReference: {fileID: 0}
     - target: {fileID: 7100613828077304962, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
       propertyPath: m_Name
       value: Sensor
@@ -23225,6 +23245,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4123262630441348254, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4123262630441348254, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5556648369854010852, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_Positions.Array.data[0].x
+      value: 20.72
+      objectReference: {fileID: 0}
+    - target: {fileID: 5556648369854010852, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_Positions.Array.data[1].x
+      value: 20.620226
+      objectReference: {fileID: 0}
+    - target: {fileID: 5556648369854010852, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_Positions.Array.data[1].z
+      value: 2.030915
+      objectReference: {fileID: 0}
     - target: {fileID: 7100613828077304962, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
       propertyPath: m_Name
       value: Sensor
@@ -23487,6 +23527,30 @@ PrefabInstance:
     - target: {fileID: 2292874052434006659, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4123262630441348254, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4123262630441348254, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5556648369854010852, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: dcae9a71b79a9a546a153f1b432488c7, type: 2}
+    - target: {fileID: 5556648369854010852, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_Positions.Array.data[0].x
+      value: 17.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5556648369854010852, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_Positions.Array.data[1].x
+      value: 17.813807
+      objectReference: {fileID: 0}
+    - target: {fileID: 5556648369854010852, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
+      propertyPath: m_Positions.Array.data[1].z
+      value: 1.7545068
       objectReference: {fileID: 0}
     - target: {fileID: 7100613828077304962, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
       propertyPath: m_Name

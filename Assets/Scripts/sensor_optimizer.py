@@ -49,8 +49,9 @@ output_path = sys.argv[2]
     [0,0,0,0,1,1],  # S4
 ]'''
 
-lambda1 = 1
-lambda2 = 50
+lambda1 = 5
+lambda2 = 5
+lambda3 = 10
 
 num_sensors = len(C)
 num_positions = len(C[0])
@@ -77,7 +78,7 @@ for j in range(num_positions):
         for k in range(i+1, len(sensors_covering_j)):
             a = sensors_covering_j[i]
             b = sensors_covering_j[k]
-            quadratic_obj[(f"x{a+1}", f"x{b+1}")] = 2*lambda2
+            quadratic_obj[(f"x{a+1}", f"x{b+1}")] = 2*lambda3
     # Constant
     constant_obj += lambda2
 
@@ -86,11 +87,11 @@ qp.minimize(linear=linear_obj, quadratic=quadratic_obj, constant=constant_obj)
 
 
 # 2. Choose QAOA optimizer
-service = QiskitRuntimeService(channel="ibm_cloud")
+# service = QiskitRuntimeService(channel="ibm_cloud")
 
 # 2. Initialize sampler (no backend argument)
 sampler = StatevectorSampler()
-qaoa = QAOA(sampler=sampler, optimizer=COBYLA(maxiter=200), reps=3)
+qaoa = QAOA(sampler=sampler, optimizer=COBYLA(maxiter=50), reps=1)
 meo = MinimumEigenOptimizer(qaoa)
 
 # 3. Solve

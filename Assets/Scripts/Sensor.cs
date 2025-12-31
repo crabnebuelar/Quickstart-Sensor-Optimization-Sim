@@ -8,6 +8,8 @@ public class Sensor : MonoBehaviour
     public LayerMask obstacleLayers;
     public float maxDistance = 10f;
     public GameObject rangeIndicator;
+    public LineRenderer lineRenderer;
+    public int segments = 64;
     public float checkInterval = 0.1f;
 
     private HashSet<Transform> candidates = new HashSet<Transform>();
@@ -40,6 +42,11 @@ public class Sensor : MonoBehaviour
         SphereCollider sphereCollider = GetComponent<SphereCollider>();
         sphereCollider.isTrigger = true;
         sphereCollider.radius = maxDistance;
+
+        lineRenderer.useWorldSpace = false; // So circle stays relative to sensor
+        lineRenderer.loop = true; // Close the circle
+        lineRenderer.positionCount = segments;
+        lineRenderer.widthMultiplier = 0.1f; // Thickness of the circle
     }
 
     void OnEnable()
@@ -78,7 +85,20 @@ public class Sensor : MonoBehaviour
 
         float diameter = maxDistance * 2f;
 
-        rangeIndicator.transform.localScale = new Vector3(diameter, 0.01f, diameter);
+        // rangeIndicator.transform.localScale = new Vector3(diameter, 0.01f, diameter);
+
+        float angleStep = 360f / segments;
+        Vector3[] points = new Vector3[segments];
+
+        for (int i = 0; i < segments; i++)
+        {
+            float angle = Mathf.Deg2Rad * i * angleStep;
+            float x = Mathf.Cos(angle) * maxDistance;
+            float z = Mathf.Sin(angle) * maxDistance;
+            points[i] = new Vector3(x, 0f, z); // Flat on XZ plane
+        }
+
+        lineRenderer.SetPositions(points);
     }
 
     private void Update()
