@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.UIElements.UxmlAttributeDescription;
@@ -23,6 +25,15 @@ public class SensorManager : MonoBehaviour
     public int maxSensors;
     public int maxDetectables;
 
+    [SerializeField] Button optimizeButton;
+    [SerializeField] Text optimizeText;
+    [SerializeField] CanvasGroup panel;
+
+
+    private void Start()
+    {
+        optimizeButton.onClick.AddListener(Optimize);
+    }
 
     private void Update()
     {
@@ -139,8 +150,13 @@ public class SensorManager : MonoBehaviour
         return string.Join(";", lines);
     }
 
-    public void Optimize()
+    public async void Optimize()
     {
+        draggable.pauseDragging();
+        SetUIInteractable(false);
+        optimizeButton.interactable = false;
+        optimizeText.text = "Optimizing...";
+
         string pythonPath = @"C:\Users\Crabnebuelar\miniconda3\python.exe";
         string scriptPath = @"Assets/Scripts/sensor_optimizer.py";
         string outputPath = @"C:\Users\Crabnebuelar\Documents\GitHub\Quickstart-Sensor-Optimization-Sim\solution.json";
@@ -149,23 +165,29 @@ public class SensorManager : MonoBehaviour
         string json = SerializeMatrix(coverageMatrix);
         print(json);
 
-        ProcessStartInfo psi = new ProcessStartInfo();
-        psi.FileName = pythonPath;
-        psi.Arguments = $"\"{scriptPath}\" \"{json}\" \"{outputPath}\"";
-        psi.UseShellExecute = false;
-        psi.RedirectStandardOutput = true;
-        psi.RedirectStandardError = true;
-        psi.CreateNoWindow = true;
+        await Task.Run(() =>
+        {
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = pythonPath,
+                Arguments = $"\"{scriptPath}\" \"{json}\" \"{outputPath}\"",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
 
-        Process p = Process.Start(psi);
-        p.WaitForExit();
+            using (Process p = Process.Start(psi))
+            {
+                p.WaitForExit();
+                string output = p.StandardOutput.ReadToEnd();
+                string errors = p.StandardError.ReadToEnd();
 
-        // Read output
-        string output = p.StandardOutput.ReadToEnd();
-        string errors = p.StandardError.ReadToEnd();
+                print("PYTHON OUTPUT:\n" + output);
+                print("PYTHON ERRORS:\n" + errors);
+            }
+        });
 
-        print("PYTHON OUTPUT:\n" + output);
-        print("PYTHON ERRORS:\n" + errors);
 
         string resultJson = File.ReadAllText("solution.json");
 
@@ -184,6 +206,35 @@ public class SensorManager : MonoBehaviour
                 sensors[i].gameObject.SetActive(false);
             }
         }
+
+        optimizeButton.interactable = true;
+
+        optimizeButton.onClick.RemoveAllListeners();
+        optimizeButton.onClick.AddListener(Reset);
+
+        optimizeText.text = "Reset";
+    }
+
+    public void Reset()
+    {
+        foreach (var sensor in sensors)
+        {
+            sensor.gameObject.SetActive(true);
+        }
+
+        optimizeButton.onClick.RemoveAllListeners();
+        optimizeButton.onClick.AddListener(Optimize);
+
+        SetUIInteractable(true);
+        draggable.resumeDragging();
+
+        optimizeText.text = "Optimize";
+
+    }
+
+    private void SetUIInteractable(bool enabled)
+    {
+        panel.interactable = enabled;
     }
 
 

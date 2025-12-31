@@ -15,18 +15,22 @@ public class Draggable : MonoBehaviour
     private Sensor selectedSensor;
     private bool canDrag;
 
-    public Renderer rend;
-    public GameObject rangeSlider;
+    private Renderer rend;
+    public Slider rangeSlider;
+
+    private bool paused = false;
 
     void Start()
     {
         cam = Camera.main;
+        rangeSlider.interactable = false;
+        
     }
 
     void Update()
     {
         // Start dragging
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !paused)
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, draggableLayer))
@@ -42,7 +46,8 @@ public class Draggable : MonoBehaviour
                 if (sComp != null && sComp != selectedSensor)
                 {
                     setSelectedSensor(sComp);
-                    rangeSlider.GetComponent<Slider>().value = selectedSensor.maxDistance;
+                    rangeSlider.interactable = true;
+                    rangeSlider.value = selectedSensor.maxDistance;
                 }
 
                 rend = selectedObject.GetChild(0).GetComponent<Renderer>();
@@ -57,7 +62,7 @@ public class Draggable : MonoBehaviour
         }
 
         // Dragging
-        if (canDrag && Input.GetMouseButton(0) && selectedObject != null && prevSelected == selectedObject)
+        if (Input.GetMouseButton(0) && canDrag && !paused && selectedObject != null && prevSelected == selectedObject)
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             Plane plane = new Plane(Vector3.up, new Vector3(0, yPosition, 0));
@@ -69,12 +74,31 @@ public class Draggable : MonoBehaviour
         }
 
         // Stop dragging
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && !paused)
         {
             prevSelected = selectedObject;
             selectedObject = null;
             canDrag = true;
         }
+    }
+
+    public void pauseDragging()
+    {
+        paused = true;
+
+        selectedObject = null;
+        prevSelected = null;
+        if (rend != null)
+        {
+            rend.material.color = originalColor;
+        }
+        setSelectedSensor(null);
+    }
+
+    public void resumeDragging()
+    {
+        paused = false;
+        rangeSlider.interactable = false;
     }
 
     public void setRangeOnSelected(float range)
