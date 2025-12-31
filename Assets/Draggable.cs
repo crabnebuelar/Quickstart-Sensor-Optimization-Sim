@@ -19,18 +19,20 @@ public class Draggable : MonoBehaviour
     public Slider rangeSlider;
 
     private bool paused = false;
+    public bool canSelect = true;
 
     void Start()
     {
         cam = Camera.main;
         rangeSlider.interactable = false;
+        rangeSlider.onValueChanged.AddListener(setRangeOnSelected);
         
     }
 
     void Update()
     {
         // Start dragging
-        if (Input.GetMouseButtonDown(0) && !paused)
+        if (Input.GetMouseButtonDown(0) && canSelect)
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, draggableLayer))
@@ -74,7 +76,7 @@ public class Draggable : MonoBehaviour
         }
 
         // Stop dragging
-        if (Input.GetMouseButtonUp(0) && !paused)
+        if (Input.GetMouseButtonUp(0) && canSelect)
         {
             prevSelected = selectedObject;
             selectedObject = null;

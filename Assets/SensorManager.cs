@@ -152,7 +152,13 @@ public class SensorManager : MonoBehaviour
 
     public async void Optimize()
     {
+        int lambda1 = 5;
+        int lambda2 = 5;
+        int lambda3 = 10;
+        
         draggable.pauseDragging();
+        draggable.canSelect = false;
+
         SetUIInteractable(false);
         optimizeButton.interactable = false;
         optimizeText.text = "Optimizing...";
@@ -170,7 +176,7 @@ public class SensorManager : MonoBehaviour
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = pythonPath,
-                Arguments = $"\"{scriptPath}\" \"{json}\" \"{outputPath}\"",
+                Arguments = $"\"{scriptPath}\" \"{json}\" \"{outputPath}\" \"{lambda1}\" \"{lambda2}\" \"{lambda3}\"",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -207,8 +213,9 @@ public class SensorManager : MonoBehaviour
             }
         }
 
-        optimizeButton.interactable = true;
+        draggable.canSelect = true;
 
+        optimizeButton.interactable = true;
         optimizeButton.onClick.RemoveAllListeners();
         optimizeButton.onClick.AddListener(Reset);
 

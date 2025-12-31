@@ -49,9 +49,9 @@ output_path = sys.argv[2]
     [0,0,0,0,1,1],  # S4
 ]'''
 
-lambda1 = 5
-lambda2 = 5
-lambda3 = 10
+lambda1 = float(sys.argv[3])
+lambda2 = float(sys.argv[4])
+lambda3 = float(sys.argv[5])
 
 num_sensors = len(C)
 num_positions = len(C[0])
