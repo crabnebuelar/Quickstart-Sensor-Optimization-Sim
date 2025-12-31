@@ -6,12 +6,15 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using TMPro;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public class SensorManager : MonoBehaviour
 {
+    public static SensorManager Active;
+    
     private List<Sensor> sensors = new List<Sensor>();
     private List<Detectable> detectables = new List<Detectable>();
     public Draggable draggable;
@@ -29,28 +32,27 @@ public class SensorManager : MonoBehaviour
     [SerializeField] Text optimizeText;
     [SerializeField] CanvasGroup panel;
 
+    private int[] lambdas = { 5, 5, 10 };
+
+
+    private void OnEnable()
+    {
+        Active = this;
+    }
+
+    private void OnDisable()
+    {
+        if (Active == this) Active = null;
+    }
 
     private void Start()
     {
         optimizeButton.onClick.AddListener(Optimize);
     }
 
-    private void Update()
+    public void OnSliderChanged(int lambda, float value)
     {
-        /*int[,] matrix = generateCoverageMatrix();
-
-        string matString = "";
-        for (int i = 0; i < matrix.GetLength(0); i++)
-        {
-            for (int j = 0; j < matrix.GetLength(1); j++)
-            {
-                matString += matrix[i, j] + " ";
-            }
-            matString += "\n"; // new line per row
-        }
-
-        print(matString);*/
-
+        lambdas[lambda] = (int) value;
     }
 
     public void AddSensor()
@@ -151,11 +153,7 @@ public class SensorManager : MonoBehaviour
     }
 
     public async void Optimize()
-    {
-        int lambda1 = 5;
-        int lambda2 = 5;
-        int lambda3 = 10;
-        
+    {   
         draggable.pauseDragging();
         draggable.canSelect = false;
 
@@ -176,7 +174,7 @@ public class SensorManager : MonoBehaviour
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = pythonPath,
-                Arguments = $"\"{scriptPath}\" \"{json}\" \"{outputPath}\" \"{lambda1}\" \"{lambda2}\" \"{lambda3}\"",
+                Arguments = $"\"{scriptPath}\" \"{json}\" \"{outputPath}\" \"{lambdas[0]}\" \"{lambdas[1]}\" \"{lambdas[2]}\"",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
