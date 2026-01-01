@@ -51,6 +51,7 @@ public class Draggable : MonoBehaviour
                     setSelectedSensor(sComp);
                     rangeSlider.interactable = true;
                     rangeSlider.value = selectedSensor.maxDistance;
+                    setRangeOnSelected(rangeSlider.value);
                 }
 
                 rend = selectedObject.GetChild(0).GetComponent<Renderer>();
@@ -118,8 +119,6 @@ public class Draggable : MonoBehaviour
     {
         selectedSensor?.rangeIndicator.SetActive(false);
         s?.rangeIndicator.SetActive(true);
-        setRangeOnSelected(rangeSlider.value);
-  
         
         selectedSensor = s;
     }
