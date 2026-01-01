@@ -9,10 +9,13 @@ public class PenaltySlider : MonoBehaviour
     [SerializeField] private Slider slider;
     [SerializeField] private Text text;
     [SerializeField] private int lambda;
+    [SerializeField] private int defaultValue;
 
     private void OnEnable()
     {
+        slider.value = defaultValue;
         slider.onValueChanged.AddListener(OnSliderChanged);
+        text.text = defaultValue.ToString();
     }
 
     void OnSliderChanged(float value)
@@ -24,5 +27,11 @@ public class PenaltySlider : MonoBehaviour
     private void OnDisable()
     {
         slider.onValueChanged.RemoveListener(OnSliderChanged);
+    }
+
+    public void Default()
+    {
+        slider.value = defaultValue;
+        text.text = defaultValue.ToString();
     }
 }
