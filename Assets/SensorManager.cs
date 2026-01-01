@@ -68,7 +68,7 @@ public class SensorManager : MonoBehaviour
 
     public void RemoveSensor()
     {
-        if (sensors.Count == 0) return;
+        if (SensorListIsEmpty()) return;
         Sensor toRemove = sensors[sensors.Count - 1];
         Unregister(toRemove);
         if(toRemove == draggable.getSelectedSensor())
@@ -77,13 +77,19 @@ public class SensorManager : MonoBehaviour
         }
         Destroy(toRemove.gameObject);
     }
+    
+    public bool SensorListIsEmpty()
+    {
+        if (sensors.Count == 0) return true;
+        return false;
+    }
 
     public void AddDetectable()
     {
         if (detectables.Count >= maxDetectables) return;
 
         Vector3 spawnPos = transform.position;
-        spawnPos.x += 25f;
+        spawnPos.x += 30f;
         GameObject sObj = Instantiate(detectablePrefab, spawnPos, Quaternion.identity);
         sObj.transform.SetParent(this.transform);
         Register(sObj.GetComponent<Detectable>());
@@ -91,10 +97,16 @@ public class SensorManager : MonoBehaviour
 
     public void RemoveDetectable()
     {
-        if (detectables.Count == 0) return;
+        if (DetectableListIsEmpty()) return;
         Detectable toRemove = detectables[detectables.Count - 1];
         Unregister(toRemove);
         Destroy(toRemove.gameObject);
+    }
+
+    public bool DetectableListIsEmpty()
+    {
+        if (detectables.Count == 0) return true;
+        return false;
     }
 
     public void Register(Sensor sensor)

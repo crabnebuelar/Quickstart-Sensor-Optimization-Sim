@@ -31,6 +31,7 @@ public class Draggable : MonoBehaviour
 
     void Update()
     {
+        cam = Camera.main;
         // Start dragging
         if (Input.GetMouseButtonDown(0) && canSelect)
         {
@@ -117,6 +118,7 @@ public class Draggable : MonoBehaviour
     {
         selectedSensor?.rangeIndicator.SetActive(false);
         s?.rangeIndicator.SetActive(true);
+        setRangeOnSelected(rangeSlider.value);
   
         
         selectedSensor = s;
