@@ -174,7 +174,8 @@ public class SensorManager : MonoBehaviour
         optimizeButton.interactable = false;
         optimizeText.text = "Optimizing...";
 
-        string pythonPath = pythonExecutablePath;
+        //string pythonPath = pythonExecutablePath;
+        string pythonPath = File.ReadAllText(Path.Combine(Application.streamingAssetsPath, "pythonpath.txt"));
         string scriptPath = Path.Combine(Application.streamingAssetsPath, "sensor_optimizer.py");
         string outputPath = Path.Combine(Application.persistentDataPath, "solution.json");
 
