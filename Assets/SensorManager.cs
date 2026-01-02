@@ -6,7 +6,6 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using TMPro;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.UIElements.UxmlAttributeDescription;
@@ -31,6 +30,8 @@ public class SensorManager : MonoBehaviour
     [SerializeField] Button optimizeButton;
     [SerializeField] Text optimizeText;
     [SerializeField] CanvasGroup panel;
+
+    [SerializeField] private string pythonExecutablePath;
 
     private int[] lambdas = { 5, 5, 10 };
 
@@ -173,9 +174,10 @@ public class SensorManager : MonoBehaviour
         optimizeButton.interactable = false;
         optimizeText.text = "Optimizing...";
 
-        string pythonPath = @"C:\Users\Crabnebuelar\miniconda3\python.exe";
-        string scriptPath = @"Assets/Scripts/sensor_optimizer.py";
-        string outputPath = @"C:\Users\Crabnebuelar\Documents\GitHub\Quickstart-Sensor-Optimization-Sim\solution.json";
+        string pythonPath = pythonExecutablePath;
+        string scriptPath = Path.Combine(Application.streamingAssetsPath, "sensor_optimizer.py");
+        string outputPath = Path.Combine(Application.persistentDataPath, "solution.json");
+
 
         int[,] coverageMatrix = generateCoverageMatrix();
         string json = SerializeMatrix(coverageMatrix);
@@ -205,7 +207,7 @@ public class SensorManager : MonoBehaviour
         });
 
 
-        string resultJson = File.ReadAllText("solution.json");
+        string resultJson = File.ReadAllText(outputPath);
 
         SensorData data = JsonUtility.FromJson<SensorData>(resultJson);
 

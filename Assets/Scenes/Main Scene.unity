@@ -4177,6 +4177,7 @@ MonoBehaviour:
   optimizeButton: {fileID: 250699269}
   optimizeText: {fileID: 1972275871}
   panel: {fileID: 1771855255}
+  pythonExecutablePath: C:\Users\Crabnebuelar\miniconda3\python.exe
 --- !u!1 &174845364
 GameObject:
   m_ObjectHideFlags: 0
@@ -38967,7 +38968,7 @@ MonoBehaviour:
   slider: {fileID: 1526489262}
   text: {fileID: 775412304}
   lambda: 1
-  defaultValue: 5
+  defaultValue: 10
 --- !u!4 &1627557819 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 416390, guid: c76d2d3504ddb4847940a815cad04644, type: 3}
