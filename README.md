@@ -23,7 +23,11 @@ Demo
 
 Problem
 -----------------------------
-The central problem addressed is optimal sensor placement in facilities where incomplete coverage can lead to safety, security, or operational risks, while excessive sensor deployment increases cost, power consumption, and system complexity. This tradeoff results in a combinatorial optimization problem whose solution space grows exponentially with the number of candidate sensor locations. Classical optimization methods can struggle to efficiently explore this space as problem size increases. Quantum optimization algorithms, and hybrid approaches that combine quantum circuits with classical parameter optimization, offer a promising alternative by exploring the solution landscape in fundamentally different ways. This project uses QUBO formulation as a bridge between classical and quantum solution methods, enabling direct comparison and experimentation within a single framework.
+Sensor placement in facilities with incomplete coverage can lead to safety, security, or operational risks, while excessive sensor deployment increases cost, power consumption, and system complexity. This tradeoff results in a combinatorial optimization problem whose solution space grows exponentially with the number of candidate sensor locations. 
+
+Classical optimization methods can struggle to efficiently explore this space as problem size increases. Quantum optimization algorithms, and hybrid approaches that combine quantum circuits with classical parameter optimization, offer a promising alternative by exploring the solution landscape in fundamentally different ways. 
+
+This project uses QUBO formulation as a bridge between classical and quantum solution methods, enabling direct comparison and experimentation within a single framework.
 
 What this simulator includes
 -----------------------------
