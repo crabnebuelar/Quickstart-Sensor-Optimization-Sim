@@ -1,6 +1,4 @@
-============================================================
-QUANTUM SENSOR OPTIMIZATION SIMULATOR
-README
+Quantum Sensor Optimization Simulator
 ============================================================
 
 PROJECT OVERVIEW
