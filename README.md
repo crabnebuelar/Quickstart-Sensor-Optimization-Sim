@@ -62,6 +62,7 @@ This project requires Python 3.9+ and the following packages:
 - qiskit-aer
 - qiskit-algorithms
 - qiskit-optimization
+- qiskit_ibm_runtime
 - numpy
 
 Recommended installation method:
@@ -74,7 +75,7 @@ Example commands:
 
     conda create -n quantum-opt python=3.10
     conda activate quantum-opt
-    pip install qiskit qiskit-aer qiskit-algorithms qiskit-optimization
+    pip install qiskit qiskit-aer qiskit-algorithms qiskit-optimization qiskit_ibm_runtime
 
 Quick Start (Unity)
 --------------------------------------
