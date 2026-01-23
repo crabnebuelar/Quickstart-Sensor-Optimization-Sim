@@ -80,8 +80,8 @@ Example commands:
 Quick Start (Unity)
 --------------------------------------
 To ensure the project runs on your computer:
- - In the editor, go to the Main Scene, and click on the SensorManager object. 
- - On the bottom script, in the Python Executable Path field, put the path for your python executable which has the qiskit dependencies installed.
+ - Open Assets, then StreamingAssets
+ - Edit pythonpath.txt to have the full path for your correct python installation
 
 
 
