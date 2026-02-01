@@ -72,9 +72,9 @@ public class SensorManager : MonoBehaviour
         if (SensorListIsEmpty()) return;
         Sensor toRemove = sensors[sensors.Count - 1];
         Unregister(toRemove);
-        if(toRemove == draggable.getSelectedSensor())
+        if(toRemove == draggable.GetSelectedSensor())
         {
-            draggable.setSelectedSensor(null);
+            draggable.SetSelectedSensor(null);
         }
         Destroy(toRemove.gameObject);
     }
@@ -167,7 +167,7 @@ public class SensorManager : MonoBehaviour
 
     public async void Optimize()
     {   
-        draggable.pauseDragging();
+        draggable.PauseDragging();
         draggable.canSelect = false;
 
         SetUIInteractable(false);
@@ -246,7 +246,7 @@ public class SensorManager : MonoBehaviour
         optimizeButton.onClick.AddListener(Optimize);
 
         SetUIInteractable(true);
-        draggable.resumeDragging();
+        draggable.ResumeDragging();
 
         optimizeText.text = "Optimize";
 

@@ -1,3 +1,8 @@
+// ============================================================================
+// Sensor.cs
+// Detects detectables through radius and line of sight, with adjustable range
+// ============================================================================
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,14 +13,49 @@ public class Sensor : MonoBehaviour
     public LayerMask obstacleLayers;
     public float maxDistance = 10f;
     public GameObject rangeIndicator;
-    public LineRenderer lineRenderer;
     public int segments = 64;
-    public float checkInterval = 0.1f;
 
     private HashSet<Transform> candidates = new HashSet<Transform>();
-    private float nextCheckTime;
 
     private SensorManager manager;
+    private LineRenderer lineRenderer;
+
+    void Awake()
+    {
+        PopulateInitialCandidates();
+        SphereCollider sphereCollider = GetComponent<SphereCollider>();
+        sphereCollider.isTrigger = true;
+        sphereCollider.radius = maxDistance;
+
+        lineRenderer = rangeIndicator.GetComponent<LineRenderer>();
+        lineRenderer.useWorldSpace = false; // So circle stays relative to sensor
+        lineRenderer.loop = true; // Close the circle
+        lineRenderer.positionCount = segments;
+        lineRenderer.widthMultiplier = 0.1f; // Thickness of the circle
+    }
+
+    void OnEnable()
+    {
+        PopulateInitialCandidates();
+        if (manager == null)
+            manager = GetComponentInParent<SensorManager>();
+
+        manager?.Register(this);
+    }
+
+    void PopulateInitialCandidates()
+    {
+        Collider[] hits = Physics.OverlapSphere(
+            transform.position,
+            maxDistance,
+            detectableLayers
+        );
+
+        foreach (Collider hit in hits)
+        {
+            candidates.Add(hit.transform);
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -33,60 +73,17 @@ public class Sensor : MonoBehaviour
     public void setRange(float range)
     {
         maxDistance = range;
-        OnValidate();
+        RangeUpdated();
     }
 
-    void Awake()
+    private void RangeUpdated()
     {
-        PopulateInitialCandidates();
-        SphereCollider sphereCollider = GetComponent<SphereCollider>();
-        sphereCollider.isTrigger = true;
-        sphereCollider.radius = maxDistance;
-
-        lineRenderer.useWorldSpace = false; // So circle stays relative to sensor
-        lineRenderer.loop = true; // Close the circle
-        lineRenderer.positionCount = segments;
-        lineRenderer.widthMultiplier = 0.1f; // Thickness of the circle
-    }
-
-    void OnEnable()
-    {
-        PopulateInitialCandidates();
-        if (manager == null)
-            manager = GetComponentInParent<SensorManager>();
-
-        manager?.Register(this);
-    }
-
-    private void Start()
-    {
-        PopulateInitialCandidates();
-    }
-
-    void PopulateInitialCandidates()
-    {
-        Collider[] hits = Physics.OverlapSphere(
-            transform.position,
-            maxDistance,
-            detectableLayers
-        );
-
-        foreach (Collider hit in hits)
-        {
-            candidates.Add(hit.transform);
-        }
-    }
-
-    void OnValidate()
-    {
+        // Update the collider bounds for detecting
         SphereCollider sc = GetComponent<SphereCollider>();
         if (sc != null)
             sc.radius = maxDistance;
 
-        float diameter = maxDistance * 2f;
-
-        // rangeIndicator.transform.localScale = new Vector3(diameter, 0.01f, diameter);
-
+        // Update the visual range indicator circle
         float angleStep = 360f / segments;
         Vector3[] points = new Vector3[segments];
 
@@ -101,31 +98,6 @@ public class Sensor : MonoBehaviour
         lineRenderer.SetPositions(points);
     }
 
-    private void Update()
-    {
-        if (Time.time < nextCheckTime) return;
-        nextCheckTime = Time.time + checkInterval;
-
-        foreach (Transform target in candidates)
-        {
-            if (target == null) continue;
-
-            /*if (HasLineOfSight(target))
-            {
-                //print("test");
-            }*/
-        }
-    }
-
-    public int CanSense(Detectable detectable)
-    {
-        if(candidates.Contains(detectable.transform) && HasLineOfSight(detectable.transform))
-        {
-            return 1;
-        }
-        return 0;
-    }
-
     bool HasLineOfSight(Transform target)
     {
         Vector3 origin = transform.position;
@@ -134,12 +106,21 @@ public class Sensor : MonoBehaviour
 
         float distance = Vector3.Distance(origin, target.position);
 
-        if (Physics.Raycast(origin, direction, out RaycastHit hit, distance, detectableLayers | obstacleLayers))
+        if (Physics.Raycast(origin, direction, out RaycastHit hit, distance, obstacleLayers))
         {
-            return hit.transform == target;
+            return false;
         }
 
-        return false;
+        return true;
+    }
+
+    public int CanSense(Detectable detectable)
+    {
+        if (candidates.Contains(detectable.transform) && HasLineOfSight(detectable.transform))
+        {
+            return 1;
+        }
+        return 0;
     }
 
     void OnDrawGizmosSelected()

@@ -1,3 +1,8 @@
+// ============================================================================
+// PenaltySlider.cs
+// Controls a UI slider that updates a penalty value in the SensorManager.
+// ============================================================================
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,15 +22,15 @@ public class PenaltySlider : MonoBehaviour
         text.text = defaultValue.ToString();
     }
 
+    private void OnDisable()
+    {
+        slider.onValueChanged.RemoveListener(OnSliderChanged);
+    }
+
     void OnSliderChanged(float value)
     {
         SensorManager.Active?.OnSliderChanged(lambda, value);
         text.text = value.ToString();
-    }
-
-    private void OnDisable()
-    {
-        slider.onValueChanged.RemoveListener(OnSliderChanged);
     }
 
     public void Default()
