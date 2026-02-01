@@ -1,3 +1,9 @@
+// ============================================================================
+// SensorManager.cs
+// Manages the sensors and detectables,
+// and executes the python wrapper to optimize through quantum optimization
+// ============================================================================
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,28 +19,26 @@ using static UnityEngine.UIElements.UxmlAttributeDescription;
 public class SensorManager : MonoBehaviour
 {
     public static SensorManager Active;
-    
-    private List<Sensor> sensors = new List<Sensor>();
-    private List<Detectable> detectables = new List<Detectable>();
-    public Draggable draggable;
-    
+
     public GameObject sensorPrefab;
     public GameObject detectablePrefab;
 
-    public Text sensorText;
-    public Text detectableText;
+    private List<Sensor> sensors = new List<Sensor>();
+    private List<Detectable> detectables = new List<Detectable>();
 
     public int maxSensors;
     public int maxDetectables;
 
+    public Draggable draggable;
+
+
+    [SerializeField] Text sensorText;
+    [SerializeField] Text detectableText;
     [SerializeField] Button optimizeButton;
     [SerializeField] Text optimizeText;
     [SerializeField] CanvasGroup panel;
 
-    [SerializeField] private string pythonExecutablePath;
-
     private int[] lambdas = { 5, 5, 10 };
-
 
     private void OnEnable()
     {
@@ -51,27 +55,32 @@ public class SensorManager : MonoBehaviour
         optimizeButton.onClick.AddListener(Optimize);
     }
 
-    public void OnSliderChanged(int lambda, float value)
+    public void UpdateLambdaValue(int lambda, float value)
     {
         lambdas[lambda] = (int) value;
     }
 
+    // Instantiate sensor prefab and register it
     public void AddSensor()
     {
         if (sensors.Count >= maxSensors) return;
 
         Vector3 spawnPos = transform.position;
         spawnPos.y += 3f;
+
         GameObject sObj = Instantiate(sensorPrefab, spawnPos, Quaternion.identity);
         sObj.transform.SetParent(this.transform);
         Register(sObj.GetComponent<Sensor>());
     }
 
+    // Removes and unregisters the most recently spawned sensor, updating the selected draggable sensor
     public void RemoveSensor()
     {
         if (SensorListIsEmpty()) return;
+
         Sensor toRemove = sensors[sensors.Count - 1];
         Unregister(toRemove);
+
         if(toRemove == draggable.GetSelectedSensor())
         {
             draggable.SetSelectedSensor(null);
@@ -85,17 +94,20 @@ public class SensorManager : MonoBehaviour
         return false;
     }
 
+    // Instantiate detectable prefab and register it
     public void AddDetectable()
     {
         if (detectables.Count >= maxDetectables) return;
 
         Vector3 spawnPos = transform.position;
         spawnPos.x += 30f;
+
         GameObject sObj = Instantiate(detectablePrefab, spawnPos, Quaternion.identity);
         sObj.transform.SetParent(this.transform);
         Register(sObj.GetComponent<Detectable>());
     }
 
+    // Removes and unregisters the most recently spawned detectable
     public void RemoveDetectable()
     {
         if (DetectableListIsEmpty()) return;
@@ -134,7 +146,8 @@ public class SensorManager : MonoBehaviour
         detectableText.text = detectables.Count.ToString();
     }
 
-    public int[,] generateCoverageMatrix()
+    // Generates a matrix of size #sensors x #detectables, where matrix[i][j] = 1 if sensor i can sense detectable j, 0 otherwise
+    public int[,] GenerateCoverageMatrix()
     {
         int[,] matrix = new int[sensors.Count, detectables.Count];
         for (int i = 0; i < sensors.Count; i++) 
@@ -147,6 +160,7 @@ public class SensorManager : MonoBehaviour
         return matrix;
     }
 
+    // Serializes the coverage matrix into a json string format
     private string SerializeMatrix(int[,] matrix)
     {
         int rows = matrix.GetLength(0);
@@ -165,6 +179,21 @@ public class SensorManager : MonoBehaviour
         return string.Join(";", lines);
     }
 
+    // Define classes for accessing optimizer results through json
+    [Serializable]
+    public class SensorKeyValue
+    {
+        public string key;
+        public float value;
+    }
+
+    [Serializable]
+    public class SensorData
+    {
+        public List<SensorKeyValue> selected_sensors;
+    }
+
+    // Optimizes the system by disabling suboptimal sensors, depending on lambda "penalty" weights
     public async void Optimize()
     {   
         draggable.PauseDragging();
@@ -174,16 +203,15 @@ public class SensorManager : MonoBehaviour
         optimizeButton.interactable = false;
         optimizeText.text = "Optimizing...";
 
-        //string pythonPath = pythonExecutablePath;
         string pythonPath = File.ReadAllText(Path.Combine(Application.streamingAssetsPath, "pythonpath.txt"));
         string scriptPath = Path.Combine(Application.streamingAssetsPath, "sensor_optimizer.py");
         string outputPath = Path.Combine(Application.persistentDataPath, "solution.json");
 
-
-        int[,] coverageMatrix = generateCoverageMatrix();
+        int[,] coverageMatrix = GenerateCoverageMatrix();
         string json = SerializeMatrix(coverageMatrix);
-        print(json);
+        //print(json);
 
+        // Executes the python optimizer, which outputs to a file in Unity's persistent data path
         await Task.Run(() =>
         {
             ProcessStartInfo psi = new ProcessStartInfo
@@ -202,14 +230,12 @@ public class SensorManager : MonoBehaviour
                 string output = p.StandardOutput.ReadToEnd();
                 string errors = p.StandardError.ReadToEnd();
 
-                print("PYTHON OUTPUT:\n" + output);
-                print("PYTHON ERRORS:\n" + errors);
+                //print("PYTHON OUTPUT:\n" + output);
+                //print("PYTHON ERRORS:\n" + errors);
             }
         });
 
-
         string resultJson = File.ReadAllText(outputPath);
-
         SensorData data = JsonUtility.FromJson<SensorData>(resultJson);
 
         // Access values
@@ -218,6 +244,7 @@ public class SensorManager : MonoBehaviour
             print(kv.key + " = " + kv.value);
         }
 
+        // Disables the sensors deemed suboptimal by the optimizer
         for (int i = 0; i < data.selected_sensors.Count; i++)
         {
             if (data.selected_sensors[i].value == 0)
@@ -225,6 +252,7 @@ public class SensorManager : MonoBehaviour
                 sensors[i].gameObject.SetActive(false);
             }
         }
+
 
         draggable.canSelect = true;
 
@@ -235,6 +263,7 @@ public class SensorManager : MonoBehaviour
         optimizeText.text = "Reset";
     }
 
+    // Reset the system for further simulation tests
     public void Reset()
     {
         foreach (var sensor in sensors)
@@ -255,20 +284,6 @@ public class SensorManager : MonoBehaviour
     private void SetUIInteractable(bool enabled)
     {
         panel.interactable = enabled;
-    }
-
-
-    [Serializable]
-    public class SensorKeyValue
-    {
-        public string key;
-        public float value;
-    }
-
-    [Serializable]
-    public class SensorData
-    {
-        public List<SensorKeyValue> selected_sensors;
     }
 
     public List<Sensor> GetSensors() => sensors;

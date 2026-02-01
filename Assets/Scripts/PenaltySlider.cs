@@ -29,7 +29,7 @@ public class PenaltySlider : MonoBehaviour
 
     void OnSliderChanged(float value)
     {
-        SensorManager.Active?.OnSliderChanged(lambda, value);
+        SensorManager.Active?.UpdateLambdaValue(lambda, value);
         text.text = value.ToString();
     }
 

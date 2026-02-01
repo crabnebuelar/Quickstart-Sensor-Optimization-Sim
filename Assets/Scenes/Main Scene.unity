@@ -4247,17 +4247,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48955fc264c5dc74391c5cb3c397961f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  draggable: {fileID: 174180611}
   sensorPrefab: {fileID: 7100613828077304962, guid: 02937c96a8e4f994e9ee7bfa3a9a8317, type: 3}
   detectablePrefab: {fileID: 2940463741395450513, guid: b39f8e362db8fd74193f70181ec22c8d, type: 3}
-  sensorText: {fileID: 1048617928}
-  detectableText: {fileID: 1786209584}
   maxSensors: 10
   maxDetectables: 10
+  draggable: {fileID: 174180611}
+  sensorText: {fileID: 1048617928}
+  detectableText: {fileID: 1786209584}
   optimizeButton: {fileID: 250699269}
   optimizeText: {fileID: 1972275871}
   panel: {fileID: 1771855255}
-  pythonExecutablePath: C:\Users\Crabnebuelar\miniconda3\python.exe
 --- !u!1 &174845364
 GameObject:
   m_ObjectHideFlags: 0
@@ -6275,7 +6274,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 250699270}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &250699270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27369,7 +27380,7 @@ GameObject:
   - component: {fileID: 1063877145}
   - component: {fileID: 1063877144}
   m_Layer: 5
-  m_Name: Main Menu
+  m_Name: Main Menu UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32751,7 +32762,7 @@ GameObject:
   - component: {fileID: 1308163863}
   - component: {fileID: 1308163862}
   m_Layer: 5
-  m_Name: Settings
+  m_Name: Optimizer Settings UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53826,7 +53837,11 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1544429053}
+  - {fileID: 1063877147}
   - {fileID: 1867221929}
+  - {fileID: 174180610}
+  - {fileID: 1308163865}
   - {fileID: 1331803631}
   - {fileID: 963194228}
   - {fileID: 447887753}
@@ -53835,7 +53850,3 @@ SceneRoots:
   - {fileID: 99575565}
   - {fileID: 453977317}
   - {fileID: 1114081829}
-  - {fileID: 1308163865}
-  - {fileID: 1063877147}
-  - {fileID: 1544429053}
-  - {fileID: 174180610}

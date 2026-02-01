@@ -37,6 +37,8 @@ public class Sensor : MonoBehaviour
     void OnEnable()
     {
         PopulateInitialCandidates();
+
+        // If pre-existing sensors exist in editor testing, register them
         if (manager == null)
             manager = GetComponentInParent<SensorManager>();
 
