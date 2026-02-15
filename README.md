@@ -54,6 +54,20 @@ The output of the optimization is a list of selected sensors,
 which is returned to Unity as a JSON file.
 
 
+Relevant Code
+-----------------------------------
+The most challenging coding problems I solved are located here:
+- `Assets/StreamingAssets/sensor_optimizer.py`
+
+This python file is where the quantum simulation is conducted, being fed the Coverage Matrix for the sensors and the user-defined penalties and converting this into a QUBO objective.
+
+- `Assets/Scripts/SensorManager.cs`
+- `Assets/Scripts/Sensor.cs`
+
+These files contain the code for the sensor-detectable system, allowing sensors to have an adjustable range and performing ray-based checks on if a detectable in range is obscured by a wall.
+When the user clicks optimize, the sensor manager then runs the python wrapper on this information, and based on it's output, deactivates any sensors deemed not optimal.
+
+
 Python Dependencies
 -------------------
 This project requires Python 3.9+ and the following packages:
@@ -96,20 +110,6 @@ passes arguments via the command line:
 
 The Python script processes these arguments, runs the optimizer,
 and writes the result to a JSON file, which Unity then reads.
-
-
-Relevant Code
------------------------------------
-The most challenging coding problems I solved are located here:
-- `Assets/StreamingAssets/sensor_optimizer.py`
-
-This python file is where the quantum simulation is conducted, being fed the Coverage Matrix for the sensors and the user-defined penalties and converting this into a QUBO objective.
-
-- `Assets/Scripts/SensorManager.cs`
-- `Assets/Scripts/Sensor.cs`
-
-These files contain the code for the sensor-detectable system, allowing sensors to have an adjustable range and performing ray-based checks on if a detectable in range is obscured by a wall.
-When the user clicks optimize, the sensor manager then runs the python wrapper on this information, and based on it's output, deactivates any sensors deemed not optimal.
 
 
 Limitations
